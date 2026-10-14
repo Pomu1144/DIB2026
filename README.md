@@ -18,11 +18,11 @@
 > don't serve that path fall back to the normal file picker. Override the URL with
 > `VITE_DIB_BUNDLED_ARCHIVE_URL`.
 >
-> **Status:** the Drive copy of `DragonIsland.app` is incomplete. Its subfolders (`en.lproj`, `de.lproj`, …)
-> are empty, and the engine refuses to start without `Monsters.plist`, `Abilities.plist`,
-> `Info.plist`, `Scale9Sprites.plist`, `mainscreenBackground.png`, `TutorialRightSide-hd.png`,
-> `Opening1`/`click` audio and `en.lproj/Localizable.strings`. Drop those into
-> `game-assets/DragonIsland.app/` from a complete copy of the app and run `pnpm assets:verify`.
+> **Status:** `game-assets/DragonIsland.app` is the complete app bundle (1,241 resource files, the iOS
+> executable left out). `pnpm assets:verify` passes, and the game boots to the title screen and intro.
+> Most sound effects are AAC (`.m4a`), which Chrome, Edge, Safari and Firefox play, but
+> open-source Chromium builds (e.g. Playwright's bundled Chromium) can't decode them. There the
+> game stops with "Unable to decode audio data".
 
 <img src="apps/web/app-icon-512.png" alt="Dragon Island Blue Web Engine icon" width="128" height="128">
 

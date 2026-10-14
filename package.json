@@ -7,7 +7,7 @@
   "scripts": {
     "play": "pnpm assets:pack && pnpm --filter @dib/web dev",
     "assets:pack": "node apps/web/scripts/pack-game-assets.mjs",
-    "assets:verify": "node apps/web/scripts/pack-game-assets.mjs --strict && pnpm --filter @dib/web exec vitest run tests/runtimeContentArchive.test.ts",
+    "assets:verify": "node apps/web/scripts/pack-game-assets.mjs --strict && DIB_TEST_CONTENT_ARCHIVE=game-assets/dist/DragonIsland.zip pnpm --filter @dib/web exec vitest run tests/runtimeContentArchive.test.ts",
     "fidelity:lab": "pnpm --filter @dib/fidelity-lab start",
     "fidelity:lab:advanced": "pnpm --filter @dib/fidelity-lab start:advanced",
     "scenario:fidelity-lab": "pnpm --filter @dib/fidelity-lab scenario:dashboard",
