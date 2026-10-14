@@ -1687,7 +1687,8 @@ export async function acquireLocalContent(host: HTMLElement): Promise<AcquiredCo
       serverStatus = result;
       if (panel.isConnected) update();
     });
-    if (archiveCache.supported) {
+    const restoreRememberedArchive = (): void => {
+      if (!archiveCache.supported) return;
       let pendingModSelection: PendingModSelection | undefined;
       let pendingModError: string | undefined;
       try { pendingModSelection = takePendingModSelection(sessionStorage); }
@@ -1768,8 +1769,50 @@ export async function acquireLocalContent(host: HTMLElement): Promise<AcquiredCo
           `The remembered archive could not be restored: ${describeError(error)} Choose it again.`;
         update();
       });
+    };
+
+    // This build bundles the game's asset archive (game-assets/, packed by `pnpm game:pack`). Load
+    // it straight into the gate instead of waiting for the picker; the rights checkbox still has
+    // to be ticked unless this exact archive was attested before. Fall back to the remembered
+    // archive when the host does not serve one.
+    const bundledArchiveUrl = import.meta.env.VITE_DIB_BUNDLED_ARCHIVE_URL as string | undefined;
+    if (bundledArchiveUrl) {
+      const bundleGeneration = archiveGeneration;
+      status.textContent = "Loading the bundled game archive…";
+      void fetchBundledArchive(bundledArchiveUrl).then(async (file) => {
+        if (archiveGeneration !== bundleGeneration || selectedFile !== undefined) return;
+        if (file === undefined) {
+          status.textContent = "";
+          restoreRememberedArchive();
+          return;
+        }
+        await selectArchive(file, "picker");
+        if (selectedFile !== file) return;
+        status.textContent = rightsInput.checked
+          ? "Loaded the bundled game archive."
+          : "Loaded the bundled game archive. Confirm you have the right to use it to continue.";
+        update();
+      }).catch((error: unknown) => {
+        if (archiveGeneration !== bundleGeneration + 1 || selectedFile === undefined) return;
+        status.classList.add("content-gate__status--error");
+        status.textContent = `The bundled game archive could not be loaded: ${describeError(error)}`;
+        update();
+      });
+    } else {
+      restoreRememberedArchive();
     }
   });
+}
+
+/** Resolves to undefined when the host does not publish a bundled archive (404 or network error),
+ * so deployments without game-assets/dist behave exactly like the upstream picker flow. */
+async function fetchBundledArchive(url: string): Promise<File | undefined> {
+  let response: Response;
+  try { response = await fetch(url); }
+  catch { return undefined; }
+  if (!response.ok) return undefined;
+  const name = decodeURIComponent(new URL(url, location.href).pathname.split("/").pop() || "DragonIsland.zip");
+  return new File([await response.blob()], name, { type: "application/zip" });
 }
 
 const CONTENT_GATE_EXIT_MS = 280;

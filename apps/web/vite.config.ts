@@ -12,7 +12,13 @@ const webAppManifestPath = resolve(webRoot, "app.webmanifest");
 const gameProxyPort = process.env["DIB_GAME_PROXY_PORT"] ?? "8788";
 const gameProxyTarget = `http://127.0.0.1:${gameProxyPort}`;
 const localApi = createLocalApiProxy(gameProxyTarget);
-const localDownloadPaths = new Map<string, string>();
+// game-assets/dist/DragonIsland.zip is produced by `pnpm game:pack`. The dev/preview servers serve
+// it at this path and the content gate fetches it on load instead of waiting for the file picker.
+const bundledArchivePath = "/game/DragonIsland.zip";
+const localDownloadPaths = new Map<string, string>([
+  [bundledArchivePath, resolve(repositoryRoot, "game-assets/dist/DragonIsland.zip")],
+]);
+process.env["VITE_DIB_BUNDLED_ARCHIVE_URL"] ??= bundledArchivePath;
 
 
 export default defineConfig(({ command }) => ({

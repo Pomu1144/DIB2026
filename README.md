@@ -1,5 +1,29 @@
 # Dragon Island Blue Web Engine
 
+> [!IMPORTANT]
+> **DIB2026 (private).** This repository is a private copy of
+> [jakedog228/dragon-island-blue-web](https://github.com/jakedog228/dragon-island-blue-web)
+> (snapshot of upstream `c344370`) with the original game's `DragonIsland.app` resources checked in
+> under [`game-assets/`](game-assets/). Those resources are the original game's copyrighted
+> material: keep this repository private and don't deploy the packed archive publicly.
+>
+> ```bash
+> pnpm install
+> pnpm play            # packs game-assets/ into game-assets/dist/DragonIsland.zip, then starts the dev server
+> pnpm assets:verify   # runs the engine's real archive importer against the packed assets
+> ```
+>
+> On load, the dev/preview server serves the packed archive at `/game/DragonIsland.zip` and the
+> content gate picks it up automatically. You still tick the rights checkbox once. Hosts that
+> don't serve that path fall back to the normal file picker. Override the URL with
+> `VITE_DIB_BUNDLED_ARCHIVE_URL`.
+>
+> **Status:** the Drive copy of `DragonIsland.app` is incomplete. Its subfolders (`en.lproj`, `de.lproj`, …)
+> are empty, and the engine refuses to start without `Monsters.plist`, `Abilities.plist`,
+> `Info.plist`, `Scale9Sprites.plist`, `mainscreenBackground.png`, `TutorialRightSide-hd.png`,
+> `Opening1`/`click` audio and `en.lproj/Localizable.strings`. Drop those into
+> `game-assets/DragonIsland.app/` from a complete copy of the app and run `pnpm assets:verify`.
+
 <img src="apps/web/app-icon-512.png" alt="Dragon Island Blue Web Engine icon" width="128" height="128">
 
 This is a playable TypeScript/PixiJS reimplementation of the discontinued pre-iOS 11 game *Dragon Island Blue*, **supporting play on all modern devices**. This work does not host or require any copyrighted material from the original game, and simply provides a flexible framework that reproduces mechanics for preservation. 

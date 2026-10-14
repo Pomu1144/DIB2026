@@ -1,10 +1,13 @@
 {
-  "name": "dib-port",
+  "name": "dib-2026",
   "private": true,
   "engines": {
     "node": ">=20.11"
   },
   "scripts": {
+    "play": "pnpm assets:pack && pnpm --filter @dib/web dev",
+    "assets:pack": "node apps/web/scripts/pack-game-assets.mjs",
+    "assets:verify": "node apps/web/scripts/pack-game-assets.mjs --strict && pnpm --filter @dib/web exec vitest run tests/runtimeContentArchive.test.ts",
     "fidelity:lab": "pnpm --filter @dib/fidelity-lab start",
     "fidelity:lab:advanced": "pnpm --filter @dib/fidelity-lab start:advanced",
     "scenario:fidelity-lab": "pnpm --filter @dib/fidelity-lab scenario:dashboard",
